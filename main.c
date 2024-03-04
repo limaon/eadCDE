@@ -1,9 +1,15 @@
+#include "cabecalho.h"
 #include <stdio.h>
+
+/*
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
+*/
 
+
+/*
 
 #define MAX_ESTOQUE 2 // Edite aqui para aumentar a qtd de estoque
 #define NUM_CAMPOS 4
@@ -146,13 +152,17 @@ void excluirItem() {
     clean("aguardeLimpar");
 }
 
-
+*/
 
 
 int main() {
     int opcao = 0;
     char entrada[10];
 
+    ItemEstoque estoque[MAX_ESTOQUE];
+    int numItens = 0;
+
+    /*
     do {
         clean("tela");
         printf("--- | MENU | --- \n");
@@ -200,6 +210,7 @@ int main() {
         }
 
     } while (opcao != 5);
+    */
 
     return 0;
 }
