@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <ctype.h>
 
 // Implementações das funções aqui
 // Por exemplo, a função limparBuffer
@@ -18,7 +17,8 @@ void limparBuffer() {
 // Função "clean" com múltiplos propósitos
 void clean(const char *opcaoLimpar) {
     if (strcmp(opcaoLimpar, "aguardeLimpar") == 0) {
-        sleep(TIME_SLEEP); // Aguarda um tempo antes de limpar a tela
+        limparBuffer();
+        getchar();
         system("@cls || clear"); // Limpa a tela no Windows e em sistemas baseados em Unix
     } else if (strcmp(opcaoLimpar, "tela") == 0) {
         system("@cls || clear"); // Limpa a tela imediatamente
@@ -32,16 +32,14 @@ void clean(const char *opcaoLimpar) {
 void exibirMensagem(int sucesso, const char *motivo) {
     if (sucesso) {
         printf("\nOperacao realizada com sucesso!\n");
+        printf("Enter para continuar!\n");
     } else {
         printf("\nFalha na operacao: %s\n", motivo);
+        printf("Enter para continuar!\n");
     }
     clean("aguardeLimpar");
 }
 
-
-/*
- * Funcoes relacionadas ao CRUD 
- */
 
 void adicionarItem(ItemEstoque estoque[], int *numItens) {
     if (*numItens >= MAX_ESTOQUE) {
@@ -86,29 +84,46 @@ void exibirEstoque(ItemEstoque estoque[], int numItens) {
     }
 }
 
-void atualizarQuantidade(ItemEstoque estoque[], int numItens) {
+void atualizarInformacoes(ItemEstoque estoque[], int numItens) {
     char codigoItem[50];
-    int novaQuantidade;
+    int opcao;
 
-    printf("Codigo do item que voce deseja atualizar: ");
-    scanf(" %49s", codigoItem); // Le o codigo do item com protecao de buffer
-    limparBuffer(); // Limpa o buffer para evitar problemas com a entrada
+    printf("Codigo do item que deseja atualizar: ");
+    scanf("%49s", codigoItem);
+    limparBuffer();
 
     for (int i = 0; i < numItens; i++) {
         if (strcmp(estoque[i].codigo, codigoItem) == 0) {
-            printf("Nova quantidade para o item %s: ", codigoItem);
-            scanf("%d", &novaQuantidade);
-            estoque[i].quantidade = novaQuantidade; // Atualiza a quantidade
-            printf("\nQuantidade atualizada com sucesso! (Aguarde)\n");
-            sleep(TIME_SLEEP); // Espera por alguns segundos
-            clean("tela"); // Limpa a tela
+            printf("Qual informacao voce deseja editar?\n");
+            printf("1. Descricao\n");
+            printf("2. Quantidade\n");
+            printf("3. Preco\n");
+            printf("Opcao: ");
+            scanf("%d", &opcao);
+            limparBuffer();
+
+            switch (opcao) {
+                case 1:
+                    printf("Nova descricao para o item %s: ", codigoItem);
+                    scanf("%49[^\n]s", estoque[i].descricao);
+                    break;
+                case 2:
+                    printf("Nova quantidade para o item %s: ", codigoItem);
+                    scanf("%d", &estoque[i].quantidade);
+                    break;
+                case 3:
+                    printf("Novo preco para o item %s: ", codigoItem);
+                    scanf("%f", &estoque[i].preco);
+                    break;
+                default:
+                    printf("Opcao invalida.\n");
+                    break;
+            }
+            exibirMensagem(1, ""); // Assumindo que exibirMensagem foi adaptado para usar sem o segundo argumento quando sucesso.
             return;
         }
     }
-
-    printf("Item nao encontrado. (Aguarde)\n");
-    sleep(TIME_SLEEP); // Espera por alguns segundos antes de limpar a tela
-    clean("tela"); // Limpa a tela se o item não for encontrado
+    exibirMensagem(0, "Item nao encontrado.");
 }
 
 
@@ -118,7 +133,6 @@ void excluirItem(ItemEstoque estoque[], int *numItens) {
 
     printf("Digite o codigo do item que deseja excluir: ");
     scanf("%49s", codigoItem);
-    limparBuffer();
 
     for (i = 0; i < *numItens; i++) {
         if (strcmp(estoque[i].codigo, codigoItem) == 0) {
@@ -133,9 +147,9 @@ void excluirItem(ItemEstoque estoque[], int *numItens) {
         }
         (*numItens)--; // Decrementa o número total de itens no estoque
 
-        printf("Item excluido com sucesso! (Aguarde)\n");
+        printf("Item excluido com sucesso! (Enter)\n");
     } else {
-        printf("Item nao encontrado. (Aguarde)\n");
+        printf("Item nao encontrado. (Enter)\n");
     }
 
     clean("aguardeLimpar");
