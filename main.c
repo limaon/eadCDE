@@ -6,8 +6,9 @@
 #include <stdlib.h>
 
 int main() {
-    ItemEstoque estoque[MAX_ESTOQUE];
+    ItemEstoque* estoque = malloc(MAX_ESTOQUE * sizeof(ItemEstoque));
     int numItens = 0;
+    int capacidadeEstoque = MAX_ESTOQUE;
     int opcao;
     char entrada[10];
 
@@ -23,19 +24,17 @@ int main() {
         scanf("%9s", entrada);
         clean("tela");
 
-        // Verificar se a entrada é um dígito
         if (!isdigit(entrada[0])) {
             printf("Entrada invalida :(\n");
-            // sleep(1);
             continue;
         }
 
-        opcao = atoi(entrada); // Converter de char para inteiro
+        opcao = atoi(entrada);
 
         switch (opcao) {
             case 1:
                 printf("Voce escolheu a opcao 1\n");
-                adicionarItem(estoque, &numItens);
+                adicionarItem(&estoque, &numItens, &capacidadeEstoque);
                 break;
             case 2:
                 printf("Voce escolheu a opcao 2\n");
@@ -58,6 +57,8 @@ int main() {
         }
 
     } while (opcao != 5);
+
+    free(estoque);
 
     return 0;
 }

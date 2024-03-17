@@ -18,7 +18,7 @@ void limparBuffer();
 void clean(const char *opcaoLimpar);
 void exibirMensagem(int sucesso, const char *motivo);
 
-void adicionarItem(ItemEstoque estoque[], int *numItens);
+void adicionarItem(ItemEstoque** estoque, int* numItens, int* capacidadeEstoque);
 void exibirEstoque(ItemEstoque estoque[], int numItens);
 void atualizarInformacoes(ItemEstoque estoque[], int numItens);
 void excluirItem(ItemEstoque estoque[], int *numItens);

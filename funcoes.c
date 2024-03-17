@@ -6,26 +6,21 @@
 #include <string.h>
 #include <unistd.h>
 
-// Implementações das funções aqui
-// Por exemplo, a função limparBuffer
 void limparBuffer() {
     while (getchar() != '\n');
 }
 
-// Implemente as demais funções conforme o código fornecido anteriormente.
-
-// Função "clean" com múltiplos propósitos
 void clean(const char *opcaoLimpar) {
     if (strcmp(opcaoLimpar, "aguardeLimpar") == 0) {
         limparBuffer();
         getchar();
-        system("@cls || clear"); // Limpa a tela no Windows e em sistemas baseados em Unix
+        system("@cls || clear");
     } else if (strcmp(opcaoLimpar, "tela") == 0) {
-        system("@cls || clear"); // Limpa a tela imediatamente
+        system("@cls || clear");
     } else if (strcmp(opcaoLimpar, "buffer") == 0) {
-        limparBuffer(); // Limpa o buffer de entrada
+        limparBuffer();
     } else {
-        printf("Opcao de limpeza invalida: %s\n", opcaoLimpar); // Caso a opção não seja reconhecida
+        printf("Opcao de limpeza invalida: %s\n", opcaoLimpar);
     }
 }
 
@@ -40,32 +35,44 @@ void exibirMensagem(int sucesso, const char *motivo) {
     clean("aguardeLimpar");
 }
 
-
-void adicionarItem(ItemEstoque estoque[], int *numItens) {
-    if (*numItens >= MAX_ESTOQUE) {
-        exibirMensagem(0, "O estoque está completo.");
-        return;
+void adicionarItem(ItemEstoque **estoque, int *numItens, int *capacidadeEstoque) {
+    if (*numItens >= *capacidadeEstoque) {
+        *capacidadeEstoque *= 2;
+        *estoque = realloc(*estoque, (*capacidadeEstoque) * sizeof(ItemEstoque));
+        if (*estoque == NULL) {
+            printf("Erro ao realocar memória.\n");
+            exit(EXIT_FAILURE);
+        }
     }
 
     printf("Código do item: ");
-    scanf(" %[^\n]s", estoque[*numItens].codigo);
+    scanf(" %[^\n]s", (*estoque)[*numItens].codigo);
     limparBuffer();
 
     printf("Descrição do item: ");
-    scanf(" %[^\n]s", estoque[*numItens].descricao);
+    scanf(" %[^\n]s", (*estoque)[*numItens].descricao);
 
-    printf("Quantidade do item: ");
-    scanf("%d", &estoque[*numItens].quantidade);
+    do {
+        printf("Quantidade do item (valor positivo): ");
+        scanf("%d", &(*estoque)[*numItens].quantidade);
+        limparBuffer();
+        if ((*estoque)[*numItens].quantidade <= 0)
+            printf("Por favor, insira uma quantidade válida.\n");
+    } while ((*estoque)[*numItens].quantidade <= 0);
 
-    printf("Preço do item: ");
-    scanf("%f", &estoque[*numItens].preco);
+    do {
+        printf("Preço do item (valor positivo): ");
+        scanf("%f", &(*estoque)[*numItens].preco);
+        limparBuffer();
+        if ((*estoque)[*numItens].preco <= 0.0)
+            printf("Por favor, insira um preço válido.\n");
+    } while ((*estoque)[*numItens].preco <= 0.0);
 
     (*numItens)++;
     exibirMensagem(1, NULL);
 }
 
-
-void exibirEstoque(ItemEstoque estoque[], int numItens) {
+void exibirEstoque(ItemEstoque *estoque, int numItens) {
     if (numItens > 0) {
         printf("Estoque:\n");
         printf("%-10s | %-20s | %-10s | %-10s\n", "Codigo", "Descricao", "Quantidade", "Preco");
@@ -84,7 +91,7 @@ void exibirEstoque(ItemEstoque estoque[], int numItens) {
     }
 }
 
-void atualizarInformacoes(ItemEstoque estoque[], int numItens) {
+void atualizarInformacoes(ItemEstoque *estoque, int numItens) {
     char codigoItem[50];
     int opcao;
 
@@ -105,7 +112,7 @@ void atualizarInformacoes(ItemEstoque estoque[], int numItens) {
             switch (opcao) {
                 case 1:
                     printf("Nova descricao para o item %s: ", codigoItem);
-                    scanf("%49[^\n]s", estoque[i].descricao);
+                    scanf(" %[^\n]s", estoque[i].descricao);
                     break;
                 case 2:
                     printf("Nova quantidade para o item %s: ", codigoItem);
@@ -119,15 +126,14 @@ void atualizarInformacoes(ItemEstoque estoque[], int numItens) {
                     printf("Opcao invalida.\n");
                     break;
             }
-            exibirMensagem(1, ""); // Assumindo que exibirMensagem foi adaptado para usar sem o segundo argumento quando sucesso.
+            exibirMensagem(1, "");
             return;
         }
     }
     exibirMensagem(0, "Item nao encontrado.");
 }
 
-
-void excluirItem(ItemEstoque estoque[], int *numItens) {
+void excluirItem(ItemEstoque *estoque, int *numItens) {
     char codigoItem[50];
     int i, encontrado = 0;
 
@@ -143,10 +149,9 @@ void excluirItem(ItemEstoque estoque[], int *numItens) {
 
     if (encontrado) {
         for (int j = i; j < (*numItens) - 1; j++) {
-            estoque[j] = estoque[j + 1]; // Desloca os itens subsequentes para "esquerda"
+            estoque[j] = estoque[j + 1];
         }
-        (*numItens)--; // Decrementa o número total de itens no estoque
-
+        (*numItens)--;
         printf("Item excluido com sucesso! (Enter)\n");
     } else {
         printf("Item nao encontrado. (Enter)\n");
