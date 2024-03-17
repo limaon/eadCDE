@@ -5,7 +5,76 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
 
+
+// Implementacao da Pilha
+void inicializarPilha(PilhaEstoque *pilha) {
+    pilha->topo = -1;
+}
+
+bool pilhaVazia(PilhaEstoque *pilha) {
+    return pilha->topo == -1;
+}
+
+bool pilhaCheia(PilhaEstoque *pilha) {
+    return pilha->topo == MAX_ESTOQUE - 1;
+}
+
+bool empilhar(PilhaEstoque *pilha, ItemEstoque item) {
+    if (pilhaCheia(pilha)) {
+        return false;
+    }
+    pilha->itens[++pilha->topo] = item;
+    return true;
+}
+
+bool desempilhar(PilhaEstoque *pilha, ItemEstoque *item) {
+    if (pilhaVazia(pilha)) {
+        return false;
+    }
+    *item = pilha->itens[pilha->topo--];
+    return true;
+}
+
+
+// Implementacao da Fila
+void inicializarFila(FilaEstoque *fila) {
+    fila->inicio = 0;
+    fila->fim = 0;
+    fila->quantidade = 0;
+}
+
+bool filaVazia(FilaEstoque *fila) {
+    return fila->quantidade == 0;
+}
+
+bool filaCheia(FilaEstoque *fila) {
+    return fila->quantidade == MAX_ESTOQUE;
+}
+
+bool enfileirar(FilaEstoque *fila, ItemEstoque item) {
+    if (filaCheia(fila)) {
+        return false;
+    }
+    fila->itens[fila->fim] = item;
+    fila->fim = (fila->fim + 1) % MAX_ESTOQUE;
+    fila->quantidade++;
+    return true;
+}
+
+bool desenfileirar(FilaEstoque *fila, ItemEstoque *item) {
+    if (filaVazia(fila)) {
+        return false;
+    }
+    *item = fila->itens[fila->inicio];
+    fila->inicio = (fila->inicio + 1) % MAX_ESTOQUE;
+    fila->quantidade--;
+    return true;
+}
+
+
+// Funcoes úteis
 void limparBuffer() {
     while (getchar() != '\n');
 }
@@ -24,6 +93,7 @@ void clean(const char *opcaoLimpar) {
     }
 }
 
+
 void exibirMensagem(int sucesso, const char *motivo) {
     if (sucesso) {
         printf("\nOperacao realizada com sucesso!\n");
@@ -35,6 +105,8 @@ void exibirMensagem(int sucesso, const char *motivo) {
     clean("aguardeLimpar");
 }
 
+
+// Implementacao das funcoes de CRUD
 void adicionarItem(ItemEstoque **estoque, int *numItens, int *capacidadeEstoque) {
     if (*numItens >= *capacidadeEstoque) {
         *capacidadeEstoque *= 2;
