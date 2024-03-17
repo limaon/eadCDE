@@ -7,6 +7,11 @@
 
 int main() {
     ItemEstoque* estoque = malloc(MAX_ESTOQUE * sizeof(ItemEstoque));
+    PilhaEstoque pilhaOperacoes;
+    FilaEstoque filaItens;
+    inicializarPilha(&pilhaOperacoes);
+    inicializarFila(&filaItens);
+
     int numItens = 0;
     int capacidadeEstoque = MAX_ESTOQUE;
     int opcao;
@@ -19,7 +24,9 @@ int main() {
         printf("2. Relatorios de Estoque\n");
         printf("3. Atualizacao de Estoque\n");
         printf("4. Excluir Item\n");
-        printf("5. Sair\n");
+        printf("5. Processar proximo item da fila\n");
+        printf("6. Reverter ultima operacao\n");
+        printf("7. Sair\n");
         printf("Opcao: ");
         scanf("%9s", entrada);
         clean("tela");
@@ -49,6 +56,14 @@ int main() {
                 excluirItem(estoque, &numItens);
                 break;
             case 5:
+                printf("Voce escolheu processar o proximo item da fila\n");
+                // Implemente a logica para processar o proximo item da fila
+                break;
+            case 6:
+                printf("Voce escolheu reverter a ultima operacao\n");
+                // Implemente a logica para reverter a ultima operacao usando a pilha
+                break;
+            case 7:
                 printf("Obrigado!!!\n");
                 break;
             default:
@@ -56,7 +71,7 @@ int main() {
                 break;
         }
 
-    } while (opcao != 5);
+    } while (opcao != 7);
 
     free(estoque);
 
