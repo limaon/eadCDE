@@ -235,6 +235,7 @@ void processarFila(FilaEstoque *fila, ItemEstoque *estoque, int *numItens) {
     } else {
         printf("Fila vazia.\n");
     }
+    exibirMensagem(1, NULL);
 }
 
 
@@ -249,4 +250,51 @@ void reverterUltimaOperacao(PilhaEstoque *pilhaAdicoes, PilhaEstoque *pilhaRemoc
     } else {
         printf("Não há operações para reverter.\n");
     }
+
+    exibirMensagem(1, NULL);
+}
+
+void exibirItensFila(FilaEstoque *fila) {
+    printf("Itens atualmente na fila de processamento:\n");
+    int posicaoAtual = fila->inicio;
+    for(int i = 0; i < fila->quantidade; i++) {
+        ItemEstoque item = fila->itens[posicaoAtual];
+        printf("%d: Código: %s, Descrição: %s, Quantidade: %d, Preço: %.2f\n",
+               i+1, item.codigo, item.descricao, item.quantidade, item.preco);
+        posicaoAtual = (posicaoAtual + 1) % MAX_ESTOQUE;
+    }
+    if (fila->quantidade == 0) {
+        printf("A fila está vazia.\n");
+    }
+
+    exibirMensagem(1, NULL);
+}
+
+
+void exibirPilhaAdicoes(PilhaEstoque *pilha) {
+    printf("Últimas adições ao estoque:\n");
+    for(int i = pilha->topo; i >= 0; i--) {
+        ItemEstoque item = pilha->itens[i];
+        printf("%d: Código: %s, Descrição: %s, Quantidade: %d, Preço: %.2f\n",
+               pilha->topo - i + 1, item.codigo, item.descricao, item.quantidade, item.preco);
+    }
+    if (pilha->topo == -1) {
+        printf("A pilha de adições está vazia.\n");
+    }
+
+    exibirMensagem(1, NULL);
+}
+
+void exibirPilhaRemocoes(PilhaEstoque *pilha) {
+    printf("Últimas remoções do estoque:\n");
+    for(int i = pilha->topo; i >= 0; i--) {
+        ItemEstoque item = pilha->itens[i];
+        printf("%d: Código: %s, Descrição: %s, Quantidade: %d, Preço: %.2f\n",
+               pilha->topo - i + 1, item.codigo, item.descricao, item.quantidade, item.preco);
+    }
+    if (pilha->topo == -1) {
+        printf("A pilha de remoções está vazia.\n");
+    }
+
+    exibirMensagem(1, NULL);
 }

@@ -24,9 +24,12 @@ int main() {
         printf("2. Relatorios de Estoque\n");
         printf("3. Atualizacao de Estoque\n");
         printf("4. Excluir Item\n");
-        printf("5. Processar proximo item da fila\n");
-        printf("6. Reverter ultima operacao\n");
-        printf("7. Sair\n");
+        printf("5. Exibir Itens na Fila\n");
+        printf("6. Processar proximo item da fila\n");
+        printf("7. Reverter ultima operacao\n");
+        printf("8. Exibir Últimas Adições\n");
+        printf("9. Exibir Últimas Remoções\n");
+        printf("10. Sair\n");
         printf("Opcao: ");
         scanf("%9s", entrada);
         clean("tela");
@@ -52,12 +55,21 @@ int main() {
                 excluirItem(estoque, &numItens, &pilhaRemocoes);
                 break;
             case 5:
-                processarFila(&filaProcessamento, estoque, &numItens);
+                exibirItensFila(&filaProcessamento);
                 break;
             case 6:
-                reverterUltimaOperacao(&pilhaAdicoes, &pilhaRemocoes, estoque, &numItens);
+                processarFila(&filaProcessamento, estoque, &numItens);
                 break;
             case 7:
+                reverterUltimaOperacao(&pilhaAdicoes, &pilhaRemocoes, estoque, &numItens);
+                break;
+            case 8:
+                exibirPilhaAdicoes(&pilhaAdicoes);
+                break;
+            case 9:
+                exibirPilhaRemocoes(&pilhaRemocoes);
+                break;
+            case 10:
                 printf("Obrigado!!!\n");
                 break;
             default:
@@ -65,7 +77,7 @@ int main() {
                 break;
         }
 
-    } while (opcao != 7);
+    } while (opcao != 10);
 
 
     if (estoque != NULL) {

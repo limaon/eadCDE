@@ -34,6 +34,8 @@ bool pilhaVazia(PilhaEstoque *pilha);
 bool pilhaCheia(PilhaEstoque *pilha);
 bool empilhar(PilhaEstoque *pilha, ItemEstoque item);
 bool desempilhar(PilhaEstoque *pilha, ItemEstoque *item);
+void exibirPilhaAdicoes(PilhaEstoque *pilha);
+void exibirPilhaRemocoes(PilhaEstoque *pilha);
 
 // Protótipos das funções para manipulação de Filas
 void inicializarFila(FilaEstoque *fila);
@@ -41,6 +43,7 @@ bool filaVazia(FilaEstoque *fila);
 bool filaCheia(FilaEstoque *fila);
 bool enfileirar(FilaEstoque *fila, ItemEstoque item);
 bool desenfileirar(FilaEstoque *fila, ItemEstoque *item);
+void exibirItensFila(FilaEstoque *fila);
 
 // Declarações das funções do sistema de controle de estoque
 void limparBuffer();
