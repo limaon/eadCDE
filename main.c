@@ -1,5 +1,3 @@
-// main.c
-
 #include "cabecalho.h"
 #include <stdio.h>
 #include <ctype.h>
@@ -7,10 +5,12 @@
 
 int main() {
     ItemEstoque* estoque = malloc(MAX_ESTOQUE * sizeof(ItemEstoque));
-    PilhaEstoque pilhaOperacoes;
-    FilaEstoque filaItens;
-    inicializarPilha(&pilhaOperacoes);
-    inicializarFila(&filaItens);
+    
+    PilhaEstoque pilhaAdicoes, pilhaRemocoes;
+    FilaEstoque filaProcessamento;
+    inicializarPilha(&pilhaAdicoes);
+    inicializarPilha(&pilhaRemocoes);
+    inicializarFila(&filaProcessamento);
 
     int numItens = 0;
     int capacidadeEstoque = MAX_ESTOQUE;
@@ -40,28 +40,22 @@ int main() {
 
         switch (opcao) {
             case 1:
-                printf("Voce escolheu a opcao 1\n");
-                adicionarItem(&estoque, &numItens, &capacidadeEstoque);
+                adicionarItem(&estoque, &numItens, &capacidadeEstoque, &pilhaAdicoes);
                 break;
             case 2:
-                printf("Voce escolheu a opcao 2\n");
                 exibirEstoque(estoque, numItens);
                 break;
             case 3:
-                printf("Voce escolheu a opcao 3\n");
-                atualizarInformacoes(estoque, numItens);
+                atualizarInformacoes(estoque, numItens, &filaProcessamento);
                 break;
             case 4:
-                printf("Voce escolheu a opcao 4\n");
-                excluirItem(estoque, &numItens);
+                excluirItem(estoque, &numItens, &pilhaRemocoes);
                 break;
             case 5:
-                printf("Voce escolheu processar o proximo item da fila\n");
-                // Implemente a logica para processar o proximo item da fila
+                processarFila(&filaProcessamento, estoque, &numItens);
                 break;
             case 6:
-                printf("Voce escolheu reverter a ultima operacao\n");
-                // Implemente a logica para reverter a ultima operacao usando a pilha
+                reverterUltimaOperacao(&pilhaAdicoes, &pilhaRemocoes, estoque, &numItens);
                 break;
             case 7:
                 printf("Obrigado!!!\n");
