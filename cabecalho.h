@@ -47,9 +47,11 @@ void limparBuffer();
 void clean(const char *opcaoLimpar);
 void exibirMensagem(int sucesso, const char *motivo);
 
-void adicionarItem(ItemEstoque** estoque, int* numItens, int* capacidadeEstoque);
+void adicionarItem(ItemEstoque** estoque, int* numItens, int* capacidadeEstoque, PilhaEstoque *pilhaAdicoes);
 void exibirEstoque(ItemEstoque estoque[], int numItens);
-void atualizarInformacoes(ItemEstoque estoque[], int numItens);
-void excluirItem(ItemEstoque estoque[], int *numItens);
+void atualizarInformacoes(ItemEstoque estoque[], int numItens, FilaEstoque *filaProcessamento);
+void excluirItem(ItemEstoque estoque[], int *numItens, PilhaEstoque *pilhaRemocoes);
+void processarFila(FilaEstoque *fila, ItemEstoque *estoque, int *numItens);
+void reverterUltimaOperacao(PilhaEstoque *pilhaAdicoes, PilhaEstoque *pilhaRemocoes, ItemEstoque *estoque, int *numItens);
 
 #endif
