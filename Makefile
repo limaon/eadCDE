@@ -27,4 +27,3 @@ $(TARGET): $(OBJS)
 # Comando para limpar os arquivos compilados, deixando apenas os fontes
 clean:
 	rm -f $(OBJS) $(TARGET)
-

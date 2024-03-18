@@ -67,7 +67,11 @@ int main() {
 
     } while (opcao != 7);
 
-    free(estoque);
+
+    if (estoque != NULL) {
+        free(estoque); // Libera a memória alocada para o array de estoque
+        estoque = NULL; // Define o ponteiro para NULL após liberar a memória
+    }
 
     return 0;
 }

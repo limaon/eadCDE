@@ -105,8 +105,23 @@ void exibirMensagem(int sucesso, const char *motivo) {
 }
 
 
+// Implementação da função auxiliar
+bool codigoExiste(ItemEstoque *estoque, int numItens, char *codigo) {
+    for (int i = 0; i < numItens; i++) {
+        if (strcmp(estoque[i].codigo, codigo) == 0) {
+            return true; // Código encontrado
+        }
+    }
+    return false; // Código não encontrado
+}
+
+
 // Implementacao das funcoes de CRUD
 void adicionarItem(ItemEstoque **estoque, int *numItens, int *capacidadeEstoque, PilhaEstoque *pilhaAdicoes) {
+
+    char codigoTemp[50]; // Buffer temporário para o código
+    bool codigoUnico; // Loop para garantir um código único
+
     if (*numItens >= *capacidadeEstoque) {
         *capacidadeEstoque *= 2;
         *estoque = realloc(*estoque, (*capacidadeEstoque) * sizeof(ItemEstoque));
@@ -116,9 +131,21 @@ void adicionarItem(ItemEstoque **estoque, int *numItens, int *capacidadeEstoque,
         }
     }
 
-    printf("Código do item: ");
-    scanf(" %[^\n]s", (*estoque)[*numItens].codigo);
-    limparBuffer();
+
+    do {
+        printf("Código do item: ");
+        scanf(" %[^\n]s", codigoTemp);
+        limparBuffer();
+
+        codigoUnico = !codigoExiste(*estoque, *numItens, codigoTemp);
+        if (!codigoUnico) {
+            printf("Código já utilizado. Por favor, insira um código único.\n");
+        }
+    } while (!codigoUnico);
+
+    // Código confirmado como único, prosseguir com a adição
+    strcpy((*estoque)[*numItens].codigo, codigoTemp);
+
 
     printf("Descrição do item: ");
     scanf(" %[^\n]s", (*estoque)[*numItens].descricao);
@@ -209,6 +236,7 @@ void processarFila(FilaEstoque *fila, ItemEstoque *estoque, int *numItens) {
         printf("Fila vazia.\n");
     }
 }
+
 
 void reverterUltimaOperacao(PilhaEstoque *pilhaAdicoes, PilhaEstoque *pilhaRemocoes, ItemEstoque *estoque, int *numItens) {
     ItemEstoque item;

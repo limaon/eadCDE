@@ -46,6 +46,7 @@ bool desenfileirar(FilaEstoque *fila, ItemEstoque *item);
 void limparBuffer();
 void clean(const char *opcaoLimpar);
 void exibirMensagem(int sucesso, const char *motivo);
+bool codigoExiste(ItemEstoque *estoque, int numItens, char *codigo);
 
 void adicionarItem(ItemEstoque** estoque, int* numItens, int* capacidadeEstoque, PilhaEstoque *pilhaAdicoes);
 void exibirEstoque(ItemEstoque estoque[], int numItens);
