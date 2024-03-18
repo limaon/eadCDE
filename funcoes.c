@@ -37,7 +37,6 @@ bool desempilhar(PilhaEstoque *pilha, ItemEstoque *item) {
     return true;
 }
 
-
 // Implementacao da Fila
 void inicializarFila(FilaEstoque *fila) {
     fila->inicio = 0;
@@ -107,7 +106,7 @@ void exibirMensagem(int sucesso, const char *motivo) {
 
 
 // Implementacao das funcoes de CRUD
-void adicionarItem(ItemEstoque **estoque, int *numItens, int *capacidadeEstoque) {
+void adicionarItem(ItemEstoque **estoque, int *numItens, int *capacidadeEstoque, PilhaEstoque *pilhaAdicoes) {
     if (*numItens >= *capacidadeEstoque) {
         *capacidadeEstoque *= 2;
         *estoque = realloc(*estoque, (*capacidadeEstoque) * sizeof(ItemEstoque));
@@ -140,6 +139,8 @@ void adicionarItem(ItemEstoque **estoque, int *numItens, int *capacidadeEstoque)
             printf("Por favor, insira um preço válido.\n");
     } while ((*estoque)[*numItens].preco <= 0.0);
 
+    empilhar(pilhaAdicoes, (*estoque)[*numItens]);
+
     (*numItens)++;
     exibirMensagem(1, NULL);
 }
@@ -149,85 +150,75 @@ void exibirEstoque(ItemEstoque *estoque, int numItens) {
         printf("Estoque:\n");
         printf("%-10s | %-20s | %-10s | %-10s\n", "Codigo", "Descricao", "Quantidade", "Preco");
         printf("------------------------------------------------------------\n");
-
         for (int i = 0; i < numItens; i++) {
             printf("%-10s | %-20s | %-10d | R$ %-10.2f\n", estoque[i].codigo, estoque[i].descricao, estoque[i].quantidade, estoque[i].preco);
+            /* printf("%s - %s - %d - %.2f\n", estoque[i].codigo, estoque[i].descricao, estoque[i].quantidade, estoque[i].preco); */
         }
-
-        printf("\nPressione (Enter) para continuar\n");
-        limparBuffer();
-        getchar();
     } else {
-        printf("Estoque está vazio (Aguarde).\n");
-        clean("aguardeLimpar");
+        printf("Estoque está vazio.\n");
     }
+    printf("------------------------------------------------------------\n");
+    printf("\nEnter para continuar.");
+    clean("aguardeLimpar");
 }
 
-void atualizarInformacoes(ItemEstoque *estoque, int numItens) {
-    char codigoItem[50];
-    int opcao;
-
-    printf("Codigo do item que deseja atualizar: ");
-    scanf("%49s", codigoItem);
-    limparBuffer();
-
+void atualizarInformacoes(ItemEstoque *estoque, int numItens, FilaEstoque *filaProcessamento) {
+    char codigo[50];
+    printf("Informe o código do item para atualização: ");
+    scanf(" %s", codigo);
     for (int i = 0; i < numItens; i++) {
-        if (strcmp(estoque[i].codigo, codigoItem) == 0) {
-            printf("Qual informacao voce deseja editar?\n");
-            printf("1. Descricao\n");
-            printf("2. Quantidade\n");
-            printf("3. Preco\n");
-            printf("Opcao: ");
-            scanf("%d", &opcao);
-            limparBuffer();
-
-            switch (opcao) {
-                case 1:
-                    printf("Nova descricao para o item %s: ", codigoItem);
-                    scanf(" %[^\n]s", estoque[i].descricao);
-                    break;
-                case 2:
-                    printf("Nova quantidade para o item %s: ", codigoItem);
-                    scanf("%d", &estoque[i].quantidade);
-                    break;
-                case 3:
-                    printf("Novo preco para o item %s: ", codigoItem);
-                    scanf("%f", &estoque[i].preco);
-                    break;
-                default:
-                    printf("Opcao invalida.\n");
-                    break;
-            }
-            exibirMensagem(1, "");
+        if (strcmp(estoque[i].codigo, codigo) == 0) {
+            printf("Atualize a descrição: ");
+            scanf(" %[^\n]s", estoque[i].descricao);
+            printf("Atualize a quantidade: ");
+            scanf("%d", &estoque[i].quantidade);
+            printf("Atualize o preço: ");
+            scanf("%f", &estoque[i].preco);
+            enfileirar(filaProcessamento, estoque[i]);
+            exibirMensagem(1, "Item atualizado com sucesso.");
             return;
         }
     }
-    exibirMensagem(0, "Item nao encontrado.");
+    exibirMensagem(0, "Código não encontrado.");
 }
 
-void excluirItem(ItemEstoque *estoque, int *numItens) {
-    char codigoItem[50];
-    int i, encontrado = 0;
-
-    printf("Digite o codigo do item que deseja excluir: ");
-    scanf("%49s", codigoItem);
-
-    for (i = 0; i < *numItens; i++) {
-        if (strcmp(estoque[i].codigo, codigoItem) == 0) {
-            encontrado = 1;
-            break;
+void excluirItem(ItemEstoque *estoque, int *numItens, PilhaEstoque *pilhaRemocoes) {
+    char codigo[50];
+    printf("Informe o código do item para exclusão: ");
+    scanf(" %s", codigo);
+    for (int i = 0; i < *numItens; i++) {
+        if (strcmp(estoque[i].codigo, codigo) == 0) {
+            empilhar(pilhaRemocoes, estoque[i]);
+            for (int j = i; j < *numItens - 1; j++) {
+                estoque[j] = estoque[j + 1];
+            }
+            (*numItens)--;
+            exibirMensagem(1, "Item excluído com sucesso.");
+            return;
         }
     }
+    exibirMensagem(0, "Código não encontrado.");
+}
 
-    if (encontrado) {
-        for (int j = i; j < (*numItens) - 1; j++) {
-            estoque[j] = estoque[j + 1];
-        }
-        (*numItens)--;
-        printf("Item excluido com sucesso! (Enter)\n");
+void processarFila(FilaEstoque *fila, ItemEstoque *estoque, int *numItens) {
+    ItemEstoque item;
+    if (desenfileirar(fila, &item)) {
+        // Processamento do item
+        printf("Item processado: %s\n", item.descricao);
     } else {
-        printf("Item nao encontrado. (Enter)\n");
+        printf("Fila vazia.\n");
     }
+}
 
-    clean("aguardeLimpar");
+void reverterUltimaOperacao(PilhaEstoque *pilhaAdicoes, PilhaEstoque *pilhaRemocoes, ItemEstoque *estoque, int *numItens) {
+    ItemEstoque item;
+    if (!pilhaVazia(pilhaRemocoes)) {
+        desempilhar(pilhaRemocoes, &item);
+        // Adicionar item de volta ao estoque
+    } else if (!pilhaVazia(pilhaAdicoes)) {
+        desempilhar(pilhaAdicoes, &item);
+        // Remover último item adicionado do estoque
+    } else {
+        printf("Não há operações para reverter.\n");
+    }
 }
